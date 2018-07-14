@@ -233,6 +233,31 @@ Exclude | `spec/spec_helper.rb`, `spec/rails_helper.rb`, `spec/support/**/*.rb` 
 
 * [http://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/BeforeAfterAll](http://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/BeforeAfterAll)
 
+## RSpec/ContainExactly
+
+Enabled by default | Supports autocorrection
+--- | ---
+Enabled | Yes
+
+Prefer `match_array` when matching array values.
+
+### Examples
+
+```ruby
+# bad
+it { is_expected.to contain_exactly(*array1, *array2) }
+
+# good
+it { is_expected.to match_array(array1 + array2) }
+
+# good
+it { is_expected.to contain_exactly(content, *array) }
+```
+
+### References
+
+* [http://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/ContainExactly](http://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/ContainExactly)
+
 ## RSpec/ContextWording
 
 Enabled by default | Supports autocorrection
@@ -1416,6 +1441,31 @@ end
 ### References
 
 * [http://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/LetSetup](http://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/LetSetup)
+
+## RSpec/MatchArray
+
+Enabled by default | Supports autocorrection
+--- | ---
+Enabled | Yes
+
+Prefer `contain_exactly` when matching an array literal.
+
+### Examples
+
+```ruby
+# bad
+it { is_expected.to match_array([content1, content2]) }
+
+# good
+it { is_expected.to contain_exactly(content1, content2) }
+
+# good
+it { is_expected.to match_array([content] + array) }
+```
+
+### References
+
+* [http://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/MatchArray](http://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/MatchArray)
 
 ## RSpec/MessageChain
 

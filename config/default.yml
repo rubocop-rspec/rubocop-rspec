@@ -48,6 +48,11 @@ RSpec/BeforeAfterAll:
   - spec/support/**/*.rb
   StyleGuide: http://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/BeforeAfterAll
 
+RSpec/ContainExactly:
+  Description: Prefer `match_array` when matching array values.
+  Enabled: true
+  StyleGuide: http://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/ContainExactly
+
 RSpec/ContextWording:
   Description: "`context` block descriptions should start with 'when', or 'with'."
   Enabled: true
@@ -238,6 +243,11 @@ RSpec/LetSetup:
   Description: Checks unreferenced `let!` calls being used for test setup.
   Enabled: true
   StyleGuide: http://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/LetSetup
+
+RSpec/MatchArray:
+  Description: Prefer `contain_exactly` when matching an array literal.
+  Enabled: true
+  StyleGuide: http://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/MatchArray
 
 RSpec/MessageChain:
   Description: Check that chains of messages are not being stubbed.

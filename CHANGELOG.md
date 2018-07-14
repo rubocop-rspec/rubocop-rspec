@@ -23,6 +23,7 @@
 * Fix `Capybara/FeatureMethods` not working when there is require before the spec. ([@Darhazer][])
 * Fix `RSpec/EmptyLineAfterFinalLet`: allow a comment to be placed after latest let, requiring empty line after the comment. ([@Darhazer][])
 * Add `RSpec/ReceiveCounts` cop to enforce usage of :once and :twice matchers. ([@Darhazer][])
+* Added `RSpec/ContainExactly` and `RSpec/MatchArray` cops. ([@faucct][])
 
 ## 1.25.1 (2018-04-10)
 
@@ -356,3 +357,4 @@ Compatibility release so users can upgrade RuboCop to 0.51.0. No new features.
 [@abrom]: https://github.com/abrom
 [@patrickomatic]: https://github.com/patrickomatic
 [@tdeo]: https://github.com/tdeo
+[@faucct]: https:/github.com/faucct

@@ -60,6 +60,101 @@ RSpec.describe RuboCop::Cop::RSpec::NamedSubject, :config do
     end
   end
 
+  context 'when EnforcedStyle is :named_only' do
+    let(:cop_config) { { 'EnforcedStyle' => :named_only } }
+
+    it 'ignores subject where declaration is not named' do
+      expect_no_offenses(<<-RUBY)
+        RSpec.describe User do
+          subject { described_class.new }
+
+          it "is a User" do
+            expect(subject).to be_a(User)
+          end
+
+          it "is valid" do
+            expect(subject.valid?).to be(true)
+          end
+        end
+      RUBY
+    end
+
+    it 'ignores subject! where declaration is not named' do
+      expect_no_offenses(<<-RUBY)
+        RSpec.describe User do
+          subject! { described_class.new }
+
+          it "is a User" do
+            expect(subject).to be_a(User)
+          end
+
+          it "is valid" do
+            expect(subject.valid?).to be(true)
+          end
+        end
+      RUBY
+    end
+
+    it 'checks subject where declaration is named' do
+      expect_offense(<<-RUBY)
+        RSpec.describe User do
+          subject(:new_user) { described_class.new }
+
+          it "is a User" do
+            expect(subject).to be_a(User)
+                   ^^^^^^^ Name your test subject if you need to reference it explicitly.
+          end
+
+          it "is valid" do
+            expect(subject.valid?).to be(true)
+                   ^^^^^^^ Name your test subject if you need to reference it explicitly.
+          end
+        end
+      RUBY
+    end
+
+    it 'checks subject! where declaration is named' do
+      expect_offense(<<-RUBY)
+        RSpec.describe User do
+          subject!(:new_user) { described_class.new }
+
+          it "is a User" do
+            expect(subject).to be_a(User)
+                   ^^^^^^^ Name your test subject if you need to reference it explicitly.
+          end
+
+          it "is valid" do
+            expect(subject.valid?).to be(true)
+                   ^^^^^^^ Name your test subject if you need to reference it explicitly.
+          end
+        end
+      RUBY
+    end
+
+    it 'ignores subject where the closest declaration is not named' do
+      expect_no_offenses(<<-RUBY)
+        RSpec.describe User do
+          subject(:user) { described_class.new }
+
+          describe 'valid' do
+            subject(:valid) { described_class.new.valid? }
+
+            it 'is valid' do
+              expect(valid).to be(true)
+            end
+          end
+
+          describe 'age' do
+            subject { user.age }
+            it 'allows driving a car' do
+              expect(subject.can_drive_a_car).to be(true)
+            end
+          end
+        end
+      RUBY
+    end
+  end
+
   context 'when IgnoreSharedExamples is false' do
     let(:cop_config) { { 'IgnoreSharedExamples' => false } }
 
@@ -78,11 +173,6 @@ RSpec.describe RuboCop::Cop::RSpec::NamedSubject, :config do
 
             it "is valid" do
               expect(subject.valid?).to be(true)
-                     ^^^^^^^ Name your test subject if you need to reference it explicitly.
-            end
-
-            it "is new" do
-              expect(subject).to be_new_record
                      ^^^^^^^ Name your test subject if you need to reference it explicitly.
             end
           end
@@ -108,10 +198,6 @@ RSpec.describe RuboCop::Cop::RSpec::NamedSubject, :config do
 
             it "is valid" do
               expect(subject.valid?).to be(true)
-            end
-
-            it "is new" do
-              expect(subject).to be_new_record
             end
           end
         end

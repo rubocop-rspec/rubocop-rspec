@@ -12,11 +12,11 @@ module RuboCop
       # should be the most important object in your tests so they deserve
       # a descriptive name.
       #
-      # This cop can be configured in your configuration using the
-      # `IgnoreSharedExamples` which will not report offenses for implicit
+      # This cop can be configured in your configuration using `EnforcedStyle`,
+      # and `IgnoreSharedExamples` which will not report offenses for implicit
       # subjects in shared example groups.
       #
-      # @example
+      # @example `EnforcedStyle: always`
       #   # bad
       #   RSpec.describe User do
       #     subject { described_class.new }
@@ -27,7 +27,7 @@ module RuboCop
       #   end
       #
       #   # good
-      #   RSpec.describe Foo do
+      #   RSpec.describe User do
       #     subject(:user) { described_class.new }
       #
       #     it 'is valid' do
@@ -36,12 +36,49 @@ module RuboCop
       #   end
       #
       #   # also good
-      #   RSpec.describe Foo do
+      #   RSpec.describe User do
       #     subject(:user) { described_class.new }
       #
       #     it { is_expected.to be_valid }
       #   end
+      #
+      # @example `EnforcedStyle: named_only`
+      #   # bad
+      #   RSpec.describe User do
+      #     subject(:user) { described_class.new }
+      #
+      #     it 'is valid' do
+      #       expect(subject.valid?).to be(true)
+      #     end
+      #   end
+      #
+      #   # good
+      #   RSpec.describe User do
+      #     subject(:user) { described_class.new }
+      #
+      #     it 'is valid' do
+      #       expect(user.valid?).to be(true)
+      #     end
+      #   end
+      #
+      #   # also good
+      #   RSpec.describe User do
+      #     subject { described_class.new }
+      #
+      #     it { is_expected.to be_valid }
+      #   end
+      #
+      #   # acceptable
+      #   RSpec.describe User do
+      #     subject { described_class.new }
+      #
+      #     it 'is valid' do
+      #       expect(subject.valid?).to be(true)
+      #     end
+      #   end
       class NamedSubject < Base
+        include ConfigurableEnforcedStyle
+
         MSG = 'Name your test subject if you need '\
               'to reference it explicitly.'
 
@@ -62,13 +99,52 @@ module RuboCop
           return if !rspec_block?(node) || ignored_shared_example?(node)
 
           subject_usage(node) do |subject_node|
-            add_offense(subject_node.loc.selector)
+            check_explicit_subject(subject_node)
           end
         end
+
+        private
 
         def ignored_shared_example?(node)
           cop_config['IgnoreSharedExamples'] &&
             node.each_ancestor(:block).any?(&method(:shared_example?))
+        end
+
+        def check_explicit_subject(node)
+          return if allow_explicit_subject?(node)
+
+          add_offense(node.loc.selector)
+        end
+
+        def allow_explicit_subject?(node)
+          !always? && !named_only?(node)
+        end
+
+        def always?
+          style == :always
+        end
+
+        def named_only?(node)
+          style == :named_only &&
+            subject_definition_is_named?(node)
+        end
+
+        def subject_definition_is_named?(node)
+          subject = nearest_subject(node)
+
+          subject&.send_node&.arguments?
+        end
+
+        def nearest_subject(node)
+          node
+            .each_ancestor(:block)
+            .lazy
+            .map { |block_node| find_subject(block_node) }
+            .find(&:itself)
+        end
+
+        def find_subject(block_node)
+          block_node.body.child_nodes.find { |send_node| subject?(send_node) }
         end
       end
     end

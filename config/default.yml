@@ -427,8 +427,13 @@ RSpec/MultipleSubjects:
 RSpec/NamedSubject:
   Description: Checks for explicitly referenced test subjects.
   Enabled: true
+  EnforcedStyle: always
+  SupportedStyles:
+  - always
+  - named_only
   IgnoreSharedExamples: true
   VersionAdded: 1.5.3
+  VersionChanged: '1.44'
   StyleGuide: https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/NamedSubject
 
 RSpec/NestedGroups:

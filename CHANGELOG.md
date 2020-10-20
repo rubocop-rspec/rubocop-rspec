@@ -10,6 +10,7 @@
 * Add `IgnoredMetadata` configuration option to `RSpec/DescribeClass`. ([@Rafix02][])
 * Fix false positives in `RSpec/EmptyExampleGroup`. ([@pirj][])
 * Fix a false positive for `RSpec/EmptyExampleGroup` when example is defined in an `if` branch. ([@koic][])
+* Add `named_only` style to `RSpec/NamedSubject`. ([@kuahyeow][])
 
 ## 1.43.2 (2020-08-25)
 
@@ -566,3 +567,4 @@ Compatibility release so users can upgrade RuboCop to 0.51.0. No new features.
 [@biinari]: https://github.com/biinari
 [@koic]: https://github.com/koic
 [@Rafix02]: https://github.com/Rafix02
+[@kuahyeow]: https://github.com/kuahyeow

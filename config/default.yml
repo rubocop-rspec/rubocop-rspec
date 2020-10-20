@@ -671,3 +671,25 @@ Rails/HttpStatus:
   - symbolic
   VersionAdded: '1.23'
   StyleGuide: https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/Rails/HttpStatus
+
+Rails/PersistenceCalledOutsideExample:
+  Description: Checks for persistence calls outside example blocks.
+  Enabled: true
+  VersionAdded: '1.43'
+  AllowedMethods: []
+  ForbiddenMethods:
+  - create
+  - create!
+  - build
+  - create_list
+  - build_list
+  - save
+  - save!
+  - create_or_find_by
+  - create_or_find_by!
+  - find_or_create_by
+  - find_or_create_by!
+  - first_or_create
+  - first_or_create!
+  - Fabricate
+  StyleGuide: https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/Rails/PersistenceCalledOutsideExample

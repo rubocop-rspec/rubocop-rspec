@@ -59,3 +59,64 @@ it { is_expected.to have_http_status :error }
 === References
 
 * https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/Rails/HttpStatus
+
+== Rails/PersistenceCalledOutsideExample
+
+|===
+| Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
+
+| Enabled
+| Yes
+| No
+| 1.43
+| -
+|===
+
+Checks for persistence calls outside example blocks.
+
+Prevents persistence calls outside examples which usually run
+with some sort of cleanup hook. Saving outside of example causes
+records to leak into other tests.
+
+@ example
+  # bad - records created outside example group
+  describe User do
+    User.create!
+  end
+
+  describe User do
+    user = User.new
+    user.save!
+  end
+
+  # good - records created inside an example group
+  describe User do
+    it do
+      User.create!
+    end
+  end
+
+  describe User do
+    it do
+      user = User.new
+      user.save!
+    end
+  end
+
+=== Configurable attributes
+
+|===
+| Name | Default value | Configurable values
+
+| AllowedMethods
+| `[]`
+| Array
+
+| ForbiddenMethods
+| `create`, `create!`, `build`, `create_list`, `build_list`, `save`, `save!`, `create_or_find_by`, `create_or_find_by!`, `find_or_create_by`, `find_or_create_by!`, `first_or_create`, `first_or_create!`, `Fabricate`
+| Array
+|===
+
+=== References
+
+* https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/Rails/PersistenceCalledOutsideExample

@@ -156,64 +156,83 @@ module RuboCop
 
           return if nearest_described_class.equal?(node)
 
-          full_const_name(nearest_described_class) == full_const_name(node)
+          same_full_const_name?(nearest_described_class, node)
         end
 
-        def full_const_name(node)
-          collapse_namespace(namespace(node), const_name(node))
+        def same_full_const_name?(node_a, node_b)
+          FullConstName.find(node_a) == FullConstName.find(node_b)
         end
 
-        # @param namespace [Array<Symbol>]
-        # @param const [Array<Symbol>]
-        # @return [Array<Symbol>]
-        # @example
-        #   # nil represents base constant
-        #   collapse_namespace([], :C)                 # => [:C]
-        #   collapse_namespace([:A, :B], [:C)          # => [:A, :B, :C]
-        #   collapse_namespace([:A, :B], [:B, :C)      # => [:A, :B, :C]
-        #   collapse_namespace([:A, :B], [nil, :C)     # => [nil, :C]
-        #   collapse_namespace([:A, :B], [nil, :B, :C) # => [nil, :B, :C]
-        def collapse_namespace(namespace, const)
-          return const if namespace.empty?
-          return const if const.first.nil?
+        # Helper module for finding the "full" constant name, with all namespace
+        # modules, for a given node.
+        module FullConstName
+          module_function
 
-          start = [0, (namespace.length - const.length)].max
-          max = namespace.length
-          intersection = (start..max).find do |shift|
-            namespace[shift, max - shift] == const[0, max - shift]
+          # Finds the "full" constant name for a given node. Seemingly
+          # identical nodes may give different results depending on which
+          # modules are defined in their ancestor nodes.
+          #
+          # @param node [RuboCop::AST::Node]
+          # @return [Array<Symbol>]
+          # @example
+          #   const_name(s(:const, nil, :C)) # => [:C]
+          #   const_name(s(:const, nil, :C)) # => [:A, :B, :C]
+          def find(node)
+            collapse_namespace(namespace(node), const_name(node))
           end
-          [*namespace[0, intersection], *const]
-        end
 
-        # @param node [RuboCop::AST::Node]
-        # @return [Array<Symbol>]
-        # @example
-        #   const_name(s(:const, nil, :C))                # => [:C]
-        #   const_name(s(:const, s(:const, nil, :M), :C)) # => [:M, :C]
-        #   const_name(s(:const, s(:cbase), :C))          # => [nil, :C]
-        def const_name(node)
-          # rubocop:disable InternalAffairs/NodeDestructuring
-          namespace, name = *node
-          # rubocop:enable InternalAffairs/NodeDestructuring
-          if !namespace
-            [name]
-          elsif namespace.const_type?
-            [*const_name(namespace), name]
-          elsif namespace.lvar_type? || namespace.cbase_type?
-            [nil, name]
+          # @param namespace [Array<Symbol>]
+          # @param const [Array<Symbol>]
+          # @return [Array<Symbol>]
+          # @example
+          #   # nil represents base constant
+          #   collapse_namespace([], [:C])                # => [:C]
+          #   collapse_namespace([:A, :B], [:C])          # => [:A, :B, :C]
+          #   collapse_namespace([:A, :B], [:B, :C])      # => [:A, :B, :C]
+          #   collapse_namespace([:A, :B], [nil, :C])     # => [nil, :C]
+          #   collapse_namespace([:A, :B], [nil, :B, :C]) # => [nil, :B, :C]
+          def collapse_namespace(namespace, const)
+            return const if namespace.empty?
+            return const if const.first.nil?
+
+            start = [0, (namespace.length - const.length)].max
+            max = namespace.length
+            intersection = (start..max).find do |shift|
+              namespace[shift, max - shift] == const[0, max - shift]
+            end
+            [*namespace[0, intersection], *const]
           end
-        end
 
-        # @param node [RuboCop::AST::Node]
-        # @return [Array<Symbol>]
-        # @example
-        #   namespace(node) # => [:A, :B, :C]
-        def namespace(node)
-          node
-            .each_ancestor(:class, :module)
-            .reverse_each
-            .flat_map { |ancestor| ancestor.defined_module_name.split('::') }
-            .map(&:to_sym)
+          # @param node [RuboCop::AST::Node]
+          # @return [Array<Symbol>]
+          # @example
+          #   const_name(s(:const, nil, :C))                # => [:C]
+          #   const_name(s(:const, s(:const, nil, :M), :C)) # => [:M, :C]
+          #   const_name(s(:const, s(:cbase), :C))          # => [nil, :C]
+          def const_name(node)
+            # rubocop:disable InternalAffairs/NodeDestructuring
+            namespace, name = *node
+            # rubocop:enable InternalAffairs/NodeDestructuring
+            if !namespace
+              [name]
+            elsif namespace.const_type?
+              [*const_name(namespace), name]
+            elsif namespace.lvar_type? || namespace.cbase_type?
+              [nil, name]
+            end
+          end
+
+          # @param node [RuboCop::AST::Node]
+          # @return [Array<Symbol>]
+          # @example
+          #   namespace(node) # => [:A, :B, :C]
+          def namespace(node)
+            node
+              .each_ancestor(:class, :module)
+              .reverse_each
+              .flat_map { |ancestor| ancestor.defined_module_name.split('::') }
+              .map(&:to_sym)
+          end
         end
       end
     end

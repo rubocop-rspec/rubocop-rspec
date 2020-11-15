@@ -1,6 +1,6 @@
 # frozen_string_literal: true
-RSpec.describe RuboCop::Cop::RSpec::FactoryBot::ConsistentParenthesesStyle , :config do
 
+RSpec.describe RuboCop::Cop::RSpec::FactoryBot::ConsistentParenthesesStyle, :config do
   let(:cop_config) do
     { 'EnforcedStyle' => enforced_style }
   end
@@ -9,33 +9,33 @@ RSpec.describe RuboCop::Cop::RSpec::FactoryBot::ConsistentParenthesesStyle , :co
     let(:enforced_style) { :enforce_parentheses }
 
     context 'with create' do
-      it 'it flags the call to use parentheses' do
+      it 'flags the call to use parentheses' do
         expect_offense(<<~RUBY)
-          create :user 
+          create :user
           ^^^^^^ Prefer method call with parentheses
         RUBY
 
         expect_correction(<<~RUBY)
-          create(:user) 
+          create(:user)
         RUBY
       end
     end
 
     context 'with build' do
-      it 'it flags the call to use parentheses' do
+      it 'flags the call to use parentheses' do
         expect_offense(<<~RUBY)
-          build :user 
+          build :user
           ^^^^^ Prefer method call with parentheses
         RUBY
 
         expect_correction(<<~RUBY)
-          build(:user) 
+          build(:user)
         RUBY
       end
     end
 
     context 'with nested calling' do
-      it 'it flags the call to use parentheses' do
+      it 'flags the call to use parentheses' do
         expect_offense(<<~RUBY)
           build :user, build(:yester)
           ^^^^^ Prefer method call with parentheses
@@ -49,7 +49,7 @@ RSpec.describe RuboCop::Cop::RSpec::FactoryBot::ConsistentParenthesesStyle , :co
       it 'works in a bigger context' do
         expect_offense(<<~RUBY)
           class Context
-            let(:build) { create :user, build(:user) } 
+            let(:build) { create :user, build(:user) }
                           ^^^^^^ Prefer method call with parentheses
 
             it 'test in test' do
@@ -57,20 +57,20 @@ RSpec.describe RuboCop::Cop::RSpec::FactoryBot::ConsistentParenthesesStyle , :co
                      ^^^^^^ Prefer method call with parentheses
             end
 
-            let(:build) { create :user, build(:user, create(:user, create(:first_name))) } 
+            let(:build) { create :user, build(:user, create(:user, create(:first_name))) }
                           ^^^^^^ Prefer method call with parentheses
           end
         RUBY
 
         expect_correction(<<~RUBY)
           class Context
-            let(:build) { create(:user, build(:user)) } 
+            let(:build) { create(:user, build(:user)) }
 
             it 'test in test' do
               user = create(:user, first: name, peter: miller)
             end
 
-            let(:build) { create(:user, build(:user, create(:user, create(:first_name)))) } 
+            let(:build) { create(:user, build(:user, create(:user, create(:first_name)))) }
           end
         RUBY
       end
@@ -91,12 +91,10 @@ RSpec.describe RuboCop::Cop::RSpec::FactoryBot::ConsistentParenthesesStyle , :co
     end
   end
 
-
   context 'when EnforcedStyle is :omit_parentheses' do
-    let(:enforced_style) { :omit_parentheses}
+    let(:enforced_style) { :omit_parentheses }
 
     context 'with create' do
-
       it 'flags the call to not use parentheses' do
         expect_offense(<<~RUBY)
           create(:user)
@@ -107,7 +105,6 @@ RSpec.describe RuboCop::Cop::RSpec::FactoryBot::ConsistentParenthesesStyle , :co
           create :user
         RUBY
       end
-
     end
 
     context 'with build' do
@@ -124,7 +121,7 @@ RSpec.describe RuboCop::Cop::RSpec::FactoryBot::ConsistentParenthesesStyle , :co
     end
 
     context 'with nested calling' do
-      it 'it flags the call to use parentheses' do
+      it 'flags the call to use parentheses' do
         expect_offense(<<~RUBY)
           build(:user, build(:yester))
           ^^^^^ Prefer method call without parentheses
@@ -153,7 +150,7 @@ RSpec.describe RuboCop::Cop::RSpec::FactoryBot::ConsistentParenthesesStyle , :co
     it 'works in a bigger context' do
       expect_offense(<<~RUBY)
         class Context
-          let(:build) { create(:user, build(:user)) } 
+          let(:build) { create(:user, build(:user)) }
                         ^^^^^^ Prefer method call without parentheses
 
           it 'test in test' do
@@ -161,20 +158,20 @@ RSpec.describe RuboCop::Cop::RSpec::FactoryBot::ConsistentParenthesesStyle , :co
                    ^^^^^^ Prefer method call without parentheses
           end
 
-          let(:build) { create(:user, build(:user, create(:user, create(:first_name)))) } 
+          let(:build) { create(:user, build(:user, create(:user, create(:first_name)))) }
                         ^^^^^^ Prefer method call without parentheses
         end
       RUBY
 
       expect_correction(<<~RUBY)
         class Context
-          let(:build) { create :user, build(:user) } 
+          let(:build) { create :user, build(:user) }
 
           it 'test in test' do
             user = create :user, first: name, peter: miller
           end
 
-          let(:build) { create :user, build(:user, create(:user, create(:first_name))) } 
+          let(:build) { create :user, build(:user, create(:user, create(:first_name))) }
         end
       RUBY
     end

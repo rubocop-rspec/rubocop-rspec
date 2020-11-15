@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module RuboCop
   module Cop
     module RSpec
@@ -20,7 +21,7 @@ module RuboCop
         #   create :login
         #   create :login
         #
-        #   # good 
+        #   # good
         #   create(:user)
         #   create(:user)
         #   create(:login)
@@ -33,40 +34,53 @@ module RuboCop
           MSG_ENFORCE_PARENS = 'Prefer method call with parentheses'
           MSG_OMIT_PARENS = 'Prefer method call without parentheses'
 
-
           def_node_matcher :factory_call, <<-PATTERN
             {
-              (send 
-                ${(const nil? {:FactoryGirl :FactoryBot}) nil?} :create (sym $_) 
+              (send
+                ${(const nil? {:FactoryGirl :FactoryBot}) nil?} :create (sym $_)
               $...)
-              (
-                send ${(const nil? {:FactoryGirl :FactoryBot}) nil?} :build (sym $_) 
+              (send 
+                ${(const nil? {:FactoryGirl :FactoryBot}) nil?} :build (sym $_)
               $...)
             }
           PATTERN
 
           def on_send(node)
+            return if nested_call?(node)
+
+            factory_call(node) do
+              if node.parenthesized?
+                process_with_parentheses(node)
+              else
+                process_without_parentheses(node)
+              end
+            end
+          end
+
+          def process_with_parentheses(node)
+            return if style == :enforce_parentheses
+
+            add_offense(node.loc.selector, message: MSG_OMIT_PARENS) do |corrector|
+              autocorrect_remove_parens(corrector, node)
+            end
+          end
+
+          def process_without_parentheses(node)
+            return if style == :omit_parentheses
+
+            add_offense(node.loc.selector, message: MSG_ENFORCE_PARENS) do |corrector|
+              autocorrect_enforce_parens(corrector, node)
+            end
+          end
+
+          def nested_call?(node)
             parent = node.parent
             # prevent from nested matching
             if parent.respond_to?('method_name')
               method_name = parent.method_name
-              if method_name == :build || method_name == :create
-                return
-              end
+              return true if %i[build create].include?(method_name)
             end
-            factory_call(node) do
-              if node.parenthesized?
-                return if style == :enforce_parentheses
-                add_offense(node.loc.selector, message: MSG_OMIT_PARENS) do |corrector|
-                  autocorrect_remove_parens(corrector, node)
-                end
-              else
-                return if style == :omit_parentheses
-                add_offense(node.loc.selector, message: MSG_ENFORCE_PARENS) do |corrector|
-                  autocorrect_enforce_parens(corrector, node)
-                end
-              end
-            end
+            false
           end
 
           private

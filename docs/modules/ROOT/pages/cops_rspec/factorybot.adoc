@@ -157,3 +157,50 @@ end
 === References
 
 * https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/FactoryBot/FactoryClassName
+
+== RSpec/FactoryBot/ConsistentParenthesesStyle
+
+|===
+| Enabled by default | Safe | Supports autocorrection | VersionAdded
+
+| Enabled
+| Yes
+| Yes
+| 2.1
+|===
+
+Use string value when setting the class attribute explicitly.
+
+This cop would promote faster tests by lazy-loading of
+application files. Also, this could help you suppress potential bugs
+in combination with external libraries by avoiding a preload of
+application files from the factory files.
+
+=== Examples
+
+[source,ruby]
+----
+# bad
+  create :tester
+  create(:tester)
+end
+
+# good
+  create(:tester)
+  create(:tester)
+end
+----
+
+=== Configurable attributes
+
+|===
+| Name | Default value | Configurable values
+
+| Include
+| `spec/factories.rb`, `spec/factories/**/*.rb`, `features/support/factories/**/*.rb`
+| Array
+|===
+
+=== References
+
+* https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/FactoryBot/ConsistentParenthesesStyle

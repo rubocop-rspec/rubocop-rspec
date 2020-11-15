@@ -573,6 +573,7 @@ Compatibility release so users can upgrade RuboCop to 0.51.0. No new features.
 [@AlexWayfer]: https://github.com/AlexWayfer
 [@tejasbubane]: https://github.com/tejasbubane
 [@twalpole]: https://github.com/twalpole
+[@liberatys]: https://github.com/liberatys
 [@zdennis]: https://github.com/zdennis
 [@robotdana]: https://github.com/robotdana
 [@rolfschmidt]: https://github.com/rolfschmidt

@@ -721,6 +721,16 @@ RSpec/FactoryBot/AttributeDefinedStatically:
   VersionChanged: '2.0'
   StyleGuide: https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/FactoryBot/AttributeDefinedStatically
 
+RSpec/FactoryBot/ConsistentParenthesesStyle:
+  Description: Use a consistent style for parentheses in factory bot calls.
+  Enabled: pending
+  EnforcedStyle: enforce_parentheses
+  SupportedStyles:
+    - enforce_parentheses
+    - omit_parentheses
+  VersionAdded: '2.1'
+  StyleGuide: https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/FactoryBot/ConsistentParenthesesStyle
+
 RSpec/FactoryBot/CreateList:
   Description: Checks for create_list usage.
   Enabled: true

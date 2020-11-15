@@ -169,12 +169,8 @@ end
 | 2.1
 |===
 
-Use string value when setting the class attribute explicitly.
-
-This cop would promote faster tests by lazy-loading of
-application files. Also, this could help you suppress potential bugs
-in combination with external libraries by avoiding a preload of
-application files from the factory files.
+Enforce the usage of parentheses or the omission of parentheses in factorybot calls. Thus
+bringing a consistent style to factorybot calls
 
 === Examples
 
@@ -197,7 +193,7 @@ end
 | Name | Default value | Configurable values
 
 | Include
-| `spec/factories.rb`, `spec/factories/**/*.rb`, `features/support/factories/**/*.rb`
+| `enforce_parentheses`, `omit_parentheses`
 | Array
 |===
 

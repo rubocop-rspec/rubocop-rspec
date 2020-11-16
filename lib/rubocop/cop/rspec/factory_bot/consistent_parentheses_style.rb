@@ -34,15 +34,13 @@ module RuboCop
           MSG_ENFORCE_PARENS = 'Prefer method call with parentheses'
           MSG_OMIT_PARENS = 'Prefer method call without parentheses'
 
+          FACTORY_CALLS = %i[create build]
+
           def_node_matcher :factory_call, <<-PATTERN
-            {
               (send
-                ${(const nil? {:FactoryGirl :FactoryBot}) nil?} :create (sym $_)
+                ${(const nil? {:FactoryGirl :FactoryBot}) nil?} {:create :build :create_list 
+                :build_list}
               $...)
-              (send 
-                ${(const nil? {:FactoryGirl :FactoryBot}) nil?} :build (sym $_)
-              $...)
-            }
           PATTERN
 
           def on_send(node)
@@ -76,7 +74,7 @@ module RuboCop
           def nested_call?(node)
             parent = node.parent
             # prevent from nested matching
-            if parent.respond_to?('method_name')
+            if parent&.send_type?
               method_name = parent.method_name
               return true if %i[build create].include?(method_name)
             end

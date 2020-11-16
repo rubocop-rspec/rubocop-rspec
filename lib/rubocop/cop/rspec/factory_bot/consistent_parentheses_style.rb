@@ -39,7 +39,8 @@ module RuboCop
           def_node_matcher :factory_call, <<-PATTERN
               (send
                 ${(const nil? {:FactoryGirl :FactoryBot}) nil?} {:create :build :create_list 
-                :build_list}
+                :build_list :create_pair :build_stubbed_list :atributes_for :build_stubbed
+                :build_pair}
               $...)
           PATTERN
 

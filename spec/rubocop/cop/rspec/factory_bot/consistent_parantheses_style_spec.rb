@@ -34,6 +34,31 @@ RSpec.describe RuboCop::Cop::RSpec::FactoryBot::ConsistentParenthesesStyle, :con
       end
     end
 
+    context 'mixed tests' do
+      it 'flags the call to use parentheses' do
+        expect_offense(<<~RUBY)
+          build_list :user, 10
+          ^^^^^^^^^^ Prefer method call with parentheses
+          build_list "user", 10
+          ^^^^^^^^^^ Prefer method call with parentheses
+          create_list :user, 10
+          ^^^^^^^^^^^ Prefer method call with parentheses
+          build_stubbed :user
+          ^^^^^^^^^^^^^ Prefer method call with parentheses
+          build_stubbed_list :user, 10
+          ^^^^^^^^^^^^^^^^^^ Prefer method call with parentheses
+        RUBY
+
+        expect_correction(<<~RUBY)
+          build_list(:user, 10)
+          build_list("user", 10)
+          create_list(:user, 10)
+          build_stubbed(:user)
+          build_stubbed_list(:user, 10)
+        RUBY
+      end
+    end
+
     context 'with nested calling' do
       it 'flags the call to use parentheses' do
         expect_offense(<<~RUBY)
@@ -103,6 +128,31 @@ RSpec.describe RuboCop::Cop::RSpec::FactoryBot::ConsistentParenthesesStyle, :con
 
         expect_correction(<<~RUBY)
           create :user
+        RUBY
+      end
+    end
+
+    context 'mixed tests' do
+      it 'flags the call not to use parentheses' do
+        expect_offense(<<~RUBY)
+          build_list(:user, 10)
+          ^^^^^^^^^^ Prefer method call without parentheses
+          build_list("user", 10)
+          ^^^^^^^^^^ Prefer method call without parentheses
+          create_list(:user, 10)
+          ^^^^^^^^^^^ Prefer method call without parentheses
+          build_stubbed(:user)
+          ^^^^^^^^^^^^^ Prefer method call without parentheses
+          build_stubbed_list(:user, 10)
+          ^^^^^^^^^^^^^^^^^^ Prefer method call without parentheses
+        RUBY
+
+        expect_correction(<<~RUBY)
+          build_list :user, 10
+          build_list "user", 10
+          create_list :user, 10
+          build_stubbed :user
+          build_stubbed_list :user, 10
         RUBY
       end
     end

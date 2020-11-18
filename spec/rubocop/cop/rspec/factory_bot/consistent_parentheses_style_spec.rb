@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe RuboCop::Cop::RSpec::FactoryBot::ConsistentParenthesesStyle, :config do
+RSpec.describe RuboCop::Cop::RSpec::FactoryBot::ConsistentParenthesesStyle do
   let(:cop_config) do
     { 'EnforcedStyle' => enforced_style }
   end
@@ -34,7 +34,7 @@ RSpec.describe RuboCop::Cop::RSpec::FactoryBot::ConsistentParenthesesStyle, :con
       end
     end
 
-    context 'mixed tests' do
+    context 'with mixed tests' do
       it 'flags the call to use parentheses' do
         expect_offense(<<~RUBY)
           build_list :user, 10
@@ -104,13 +104,13 @@ RSpec.describe RuboCop::Cop::RSpec::FactoryBot::ConsistentParenthesesStyle, :con
     context 'with already valid usage of parentheses' do
       it 'does not flag as invalid - create' do
         expect_no_offenses(<<~RUBY)
-          create(:user) 
+          create(:user)
         RUBY
       end
 
       it 'does not flag as invalid - build' do
         expect_no_offenses(<<~RUBY)
-          build(:user) 
+          build(:user)
         RUBY
       end
     end
@@ -132,7 +132,15 @@ RSpec.describe RuboCop::Cop::RSpec::FactoryBot::ConsistentParenthesesStyle, :con
       end
     end
 
-    context 'mixed tests' do
+    context 'with nest call' do
+      it 'inner call is ignored and not fixed' do
+        expect_no_offenses(<<~RUBY)
+          puts(1, create(:user))
+        RUBY
+      end
+    end
+
+    context 'with mixed tests' do
       it 'flags the call not to use parentheses' do
         expect_offense(<<~RUBY)
           build_list(:user, 10)

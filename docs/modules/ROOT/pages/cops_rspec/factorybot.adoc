@@ -51,6 +51,58 @@ count { 1 }
 
 * https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/FactoryBot/AttributeDefinedStatically
 
+== RSpec/FactoryBot/ConsistentParenthesesStyle
+
+|===
+| Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
+
+| Pending
+| Yes
+| Yes
+| 2.1
+| -
+|===
+
+Use a consistent style for parentheses in factory bot calls.
+
+=== Examples
+
+[source,ruby]
+----
+# bad
+
+create :user
+build(:user)
+create(:login)
+create :login
+
+# good
+create :user
+build :user
+create :login
+create :login
+
+# good
+create(:user)
+create(:user)
+create(:login)
+build(:login)
+----
+
+=== Configurable attributes
+
+|===
+| Name | Default value | Configurable values
+
+| EnforcedStyle
+| `enforce_parentheses`
+| `enforce_parentheses`, `omit_parentheses`
+|===
+
+=== References
+
+* https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/FactoryBot/ConsistentParenthesesStyle
+
 == RSpec/FactoryBot/CreateList
 
 |===
@@ -157,46 +209,3 @@ end
 === References
 
 * https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/FactoryBot/FactoryClassName
-
-== RSpec/FactoryBot/ConsistentParenthesesStyle
-
-|===
-| Enabled by default | Safe | Supports autocorrection | VersionAdded
-
-| Enabled
-| Yes
-| Yes
-| 2.1
-|===
-
-Enforce the usage of parentheses or the omission of parentheses in factorybot calls. Thus
-bringing a consistent style to factorybot calls
-
-=== Examples
-
-[source,ruby]
-----
-# bad
-  create :tester
-  create(:tester)
-end
-
-# good
-  create(:tester)
-  create(:tester)
-end
-----
-
-=== Configurable attributes
-
-|===
-| Name | Default value | Configurable values
-
-| Include
-| `enforce_parentheses`, `omit_parentheses`
-| Array
-|===
-
-=== References
-
-* https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/FactoryBot/ConsistentParenthesesStyle

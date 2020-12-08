@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+* Fixed false offense detection in `FactoryBot/CreateList` when a n.times block is including method calls in the factory create arguments. ([@ngouy][])
+
 ## 2.0.1 (2020-12-02)
 
 * Fixed infinite loop in `RSpec/ExpectActual` autocorrection when both expected and actual values are literals. ([@Darhazer][])
@@ -590,3 +592,4 @@ Compatibility release so users can upgrade RuboCop to 0.51.0. No new features.
 [@Rafix02]: https://github.com/Rafix02
 [@PhilCoggins]: https://github.com/PhilCoggins
 [@sl4vr]: https://github.com/sl4vr
+[@ngouy]: https://github.com/ngouy

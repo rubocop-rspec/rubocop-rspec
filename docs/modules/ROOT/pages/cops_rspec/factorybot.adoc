@@ -79,8 +79,14 @@ This cop can be configured using the `EnforcedStyle` option
 # good
 create_list :user, 3
 
+# bad
+3.times { create :user, age: 18 }
+
 # good
-3.times { |n| create :user, created_at: n.months.ago }
+3.times { |n| create :user, age: n }
+
+# good
+3.times { create :user, age: rand }
 ----
 
 ==== `EnforcedStyle: n_times`

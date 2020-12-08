@@ -55,7 +55,13 @@ RSpec.describe RuboCop::Cop::RSpec::FactoryBot::CreateList do
 
     it 'ignores n.times with argument' do
       expect_no_offenses(<<~RUBY)
-        3.times { |n| create :user, created_at: n.days.ago }
+        3.times { |n| create :user, position: n }
+      RUBY
+    end
+
+    it 'ignores when a method is called in factory arguments' do
+      expect_no_offenses(<<~RUBY)
+        3.times { create :user, position: rand }
       RUBY
     end
 

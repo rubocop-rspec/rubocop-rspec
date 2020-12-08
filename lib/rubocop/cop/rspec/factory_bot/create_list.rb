@@ -15,8 +15,14 @@ module RuboCop
         #   # good
         #   create_list :user, 3
         #
+        #   # bad
+        #   3.times { create :user, age: 18 }
+        #
         #   # good
-        #   3.times { |n| create :user, created_at: n.months.ago }
+        #   3.times { |n| create :user, age: n }
+        #
+        #   # good
+        #   3.times { create :user, age: rand }
         #
         # @example `EnforcedStyle: n_times`
         #   # bad
@@ -39,6 +45,10 @@ module RuboCop
             )
           PATTERN
 
+          def_node_matcher :block_contains_method_calls?, <<-PATTERN
+            (send ${(const nil? {:FactoryGirl :FactoryBot}) nil?} :create (sym $_) `$(send ...))
+          PATTERN
+
           def_node_matcher :factory_call, <<-PATTERN
             (send ${(const nil? {:FactoryGirl :FactoryBot}) nil?} :create (sym $_) $...)
           PATTERN
@@ -50,6 +60,7 @@ module RuboCop
           def on_block(node)
             return unless style == :create_list
             return unless n_times_block_without_arg?(node)
+            return if block_contains_method_calls?(node.body)
             return unless contains_only_factory?(node.body)
 
             add_offense(node.send_node, message: MSG_CREATE_LIST) do |corrector|

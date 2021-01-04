@@ -6,7 +6,7 @@ module RuboCop
       module FactoryBot
         # Use a consistent style for parentheses in factory bot calls
         #
-        # @example
+        # @example 
         #
         #   # bad
         #
@@ -15,17 +15,21 @@ module RuboCop
         #   create(:login)
         #   create :login
         #
-        #   # good
-        #   create :user
-        #   build :user
-        #   create :login
-        #   create :login
+        # @example `EnforcedStyle: require_parentheses`
         #
         #   # good
         #   create(:user)
         #   create(:user)
         #   create(:login)
         #   build(:login)
+        #
+        # @example `EnforcedStyle: omit_parentheses`
+        #
+        #   # good
+        #   create :user
+        #   build :user
+        #   create :login
+        #   create :login
         #
         class ConsistentParenthesesStyle < Base
           extend AutoCorrector
@@ -58,7 +62,7 @@ module RuboCop
           end
 
           def process_with_parentheses(node)
-            return if style == :enforce_parentheses
+            return if style == :require_parentheses
 
             add_offense(node.loc.selector,
                         message: MSG_OMIT_PARENS) do |corrector|

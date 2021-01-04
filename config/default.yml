@@ -724,9 +724,9 @@ RSpec/FactoryBot/AttributeDefinedStatically:
 RSpec/FactoryBot/ConsistentParenthesesStyle:
   Description: Use a consistent style for parentheses in factory bot calls.
   Enabled: pending
-  EnforcedStyle: enforce_parentheses
+  EnforcedStyle: require_parentheses
   SupportedStyles:
-    - enforce_parentheses
+    - require_parentheses
     - omit_parentheses
   VersionAdded: '2.1'
   StyleGuide: https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/FactoryBot/ConsistentParenthesesStyle

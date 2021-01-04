@@ -21,6 +21,23 @@ RSpec.describe RuboCop::Cop::RSpec::FactoryBot::ConsistentParenthesesStyle do
       end
     end
 
+    context 'with multiline method calls' do
+      it 'expects parantheses around multiline call' do
+        expect_offense(<<~RUBY)
+          create :user,
+          ^^^^^^ Prefer method call with parentheses
+            username: "PETER",
+            peter: "USERNAME"
+        RUBY
+
+        expect_correction(<<~RUBY)
+          create(:user,
+            username: "PETER",
+            peter: "USERNAME")
+        RUBY
+      end
+    end
+
     context 'with build' do
       it 'flags the call to use parentheses' do
         expect_offense(<<~RUBY)
@@ -136,6 +153,23 @@ RSpec.describe RuboCop::Cop::RSpec::FactoryBot::ConsistentParenthesesStyle do
       it 'inner call is ignored and not fixed' do
         expect_no_offenses(<<~RUBY)
           puts(1, create(:user))
+        RUBY
+      end
+    end
+
+    context 'with multiline method calls' do
+      it 'removes parantheses around multiline call' do
+        expect_offense(<<~RUBY)
+          create(:user,
+          ^^^^^^ Prefer method call without parentheses
+            username: "PETER",
+            peter: "USERNAME")
+        RUBY
+
+        expect_correction(<<~RUBY)
+          create :user,
+            username: "PETER",
+            peter: "USERNAME"
         RUBY
       end
     end

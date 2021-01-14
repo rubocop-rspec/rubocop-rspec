@@ -47,6 +47,29 @@ RSpec.describe RuboCop::Cop::RSpec::ExpectChange, :config do
         end
       RUBY
     end
+
+    it 'ignores methods called change' do
+      expect_no_offenses(<<-RUBY)
+        it do
+          expect(run).to change(User::Token, :count).by(1)
+        end
+      RUBY
+    end
+
+    it 'flags change matcher without method calls' do
+      expect_offense(<<-RUBY)
+        it do
+          expect(run).to change { User::Token.count }.by(1)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `change(User::Token, :count)`.
+        end
+      RUBY
+
+      expect_correction(<<-RUBY)
+        it do
+          expect(run).to change(User::Token, :count).by(1)
+        end
+      RUBY
+    end
   end
 
   context 'with EnforcedStyle `block`' do

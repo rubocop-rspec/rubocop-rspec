@@ -70,6 +70,15 @@ RSpec.describe RuboCop::Cop::RSpec::ExpectChange, :config do
         end
       RUBY
     end
+
+    it 'flags change matcher without nested method calls' do
+      expect_offense(<<-RUBY)
+        it do
+          expect { file.upload! }.to change { user.uploads.count }.by(1)
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `change(user.uploads, :count)`.
+        end
+      RUBY
+    end
   end
 
   context 'with EnforcedStyle `block`' do
@@ -131,6 +140,15 @@ RSpec.describe RuboCop::Cop::RSpec::ExpectChange, :config do
       expect_correction(<<-RUBY)
         it do
           expect { run }.to change { user.count }
+        end
+      RUBY
+    end
+
+    it 'flags change matcher when nested receiver is a variable' do
+      expect_offense(<<-RUBY)
+        it do
+          expect { file.upload! }.to change(user.uploads, :count)
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `change { user.uploads.count }`.
         end
       RUBY
     end

@@ -37,14 +37,14 @@ module RuboCop
         MSG_CALL = 'Prefer `change { %<obj>s.%<attr>s }`.'
 
         def_node_matcher :expect_change_with_arguments, <<-PATTERN
-          (send nil? :change {$const (send nil? $_)} (sym $_))
+          (send nil? :change {$const $(send {nil? (send nil? _)} _)} (sym $_))
         PATTERN
 
         def_node_matcher :expect_change_with_block, <<-PATTERN
           (block
             (send nil? :change)
             (args)
-            (send {$const (send nil? $_)} $_)
+            (send {$const $(send {nil? (send nil? _)} _)} $_)
           )
         PATTERN
 
@@ -66,7 +66,7 @@ module RuboCop
           return unless style == :method_call
 
           expect_change_with_block(node) do |receiver, message|
-            obj = receiver.is_a?(RuboCop::AST::Node) ? receiver.source : receiver
+            obj = receiver.source
 
             msg = format(MSG_BLOCK, obj: obj, attr: message)
             add_offense(node, message: msg) do |corrector|

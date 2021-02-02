@@ -52,7 +52,7 @@ module RuboCop
           return unless style == :block
 
           expect_change_with_arguments(node) do |receiver, message|
-            obj = receiver.is_a?(RuboCop::AST::Node) ? receiver.source : receiver
+            obj = receiver.source
 
             msg = format(MSG_CALL, obj: obj, attr: message)
             add_offense(node, message: msg) do |corrector|

@@ -255,6 +255,45 @@ RSpec.describe RuboCop::Cop::RSpec::ExcessiveDocstringSpacing do
       RUBY
     end
 
+    it 'handles one-word descriptions' do
+      expect_offense(<<-'RUBY')
+        it "tests  " do
+            ^^^^^^^ Excessive whitespace.
+        end
+      RUBY
+
+      expect_correction(<<-'RUBY')
+        it "tests" do
+        end
+      RUBY
+    end
+
+    it 'handles interpolated one-word descriptions' do
+      expect_offense(<<-'RUBY')
+        it "#{:stuff}  " do
+            ^^^^^^^^^^^ Excessive whitespace.
+        end
+      RUBY
+
+      expect_correction(<<-'RUBY')
+        it "#{:stuff}" do
+        end
+      RUBY
+    end
+
+    it 'handles descriptions starting with an interpolated value' do
+      expect_offense(<<-'RUBY')
+        it "#{:stuff} something   " do
+            ^^^^^^^^^^^^^^^^^^^^^^ Excessive whitespace.
+        end
+      RUBY
+
+      expect_correction(<<-'RUBY')
+        it "#{:stuff} something" do
+        end
+      RUBY
+    end
+
     it 'flags lone whitespace' do
       expect_offense(<<-RUBY)
         it '   ' do

@@ -47,6 +47,38 @@ RSpec.describe RuboCop::Cop::RSpec::ExpectChange do
         end
       RUBY
     end
+
+    it 'ignores methods called change' do
+      expect_no_offenses(<<-RUBY)
+        it do
+          expect(run).to change(User::Token, :count).by(1)
+        end
+      RUBY
+    end
+
+    it 'flags change matcher without method calls' do
+      expect_offense(<<-RUBY)
+        it do
+          expect(run).to change { User::Token.count }.by(1)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `change(User::Token, :count)`.
+        end
+      RUBY
+
+      expect_correction(<<-RUBY)
+        it do
+          expect(run).to change(User::Token, :count).by(1)
+        end
+      RUBY
+    end
+
+    it 'flags change matcher without nested method calls' do
+      expect_offense(<<-RUBY)
+        it do
+          expect { file.upload! }.to change { user.uploads.count }.by(1)
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `change(user.uploads, :count)`.
+        end
+      RUBY
+    end
   end
 
   context 'with EnforcedStyle `block`' do
@@ -67,17 +99,56 @@ RSpec.describe RuboCop::Cop::RSpec::ExpectChange do
       RUBY
     end
 
-    it 'flags change matcher when receiver is a variable' do
+    it 'flags change matcher without block with nested class' do
       expect_offense(<<-RUBY)
         it do
-          expect { run }.to change(User, :count)
-                            ^^^^^^^^^^^^^^^^^^^^ Prefer `change { User.count }`.
+          expect { run }.to change(User::Token, :count).by(1)
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `change { User::Token.count }`.
         end
       RUBY
 
       expect_correction(<<-RUBY)
         it do
-          expect { run }.to change { User.count }
+          expect { run }.to change { User::Token.count }.by(1)
+        end
+      RUBY
+    end
+
+    it 'flags change matcher without block with root class' do
+      expect_offense(<<-RUBY)
+        it do
+          expect { run }.to change(::Token, :count).by(1)
+                            ^^^^^^^^^^^^^^^^^^^^^^^ Prefer `change { ::Token.count }`.
+        end
+      RUBY
+
+      expect_correction(<<-RUBY)
+        it do
+          expect { run }.to change { ::Token.count }.by(1)
+        end
+      RUBY
+    end
+
+    it 'flags change matcher when receiver is a variable' do
+      expect_offense(<<-RUBY)
+        it do
+          expect { run }.to change(user, :count)
+                            ^^^^^^^^^^^^^^^^^^^^ Prefer `change { user.count }`.
+        end
+      RUBY
+
+      expect_correction(<<-RUBY)
+        it do
+          expect { run }.to change { user.count }
+        end
+      RUBY
+    end
+
+    it 'flags change matcher when nested receiver is a variable' do
+      expect_offense(<<-RUBY)
+        it do
+          expect { file.upload! }.to change(user.uploads, :count)
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Prefer `change { user.uploads.count }`.
         end
       RUBY
     end

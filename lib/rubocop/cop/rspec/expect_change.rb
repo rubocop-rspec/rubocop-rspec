@@ -39,7 +39,7 @@ module RuboCop
 
         # @!method expect_change_with_arguments(node)
         def_node_matcher :expect_change_with_arguments, <<-PATTERN
-          (send nil? :change ({const send} nil? $_) (sym $_))
+          (send nil? :change {$const $(send {nil? (send nil? _)} _)} (sym $_))
         PATTERN
 
         # @!method expect_change_with_block(node)
@@ -47,7 +47,7 @@ module RuboCop
           (block
             (send nil? :change)
             (args)
-            (send ({const send} nil? $_) $_)
+            (send {$const $(send {nil? (send nil? _)} _)} $_)
           )
         PATTERN
 
@@ -55,9 +55,11 @@ module RuboCop
           return unless style == :block
 
           expect_change_with_arguments(node) do |receiver, message|
-            msg = format(MSG_CALL, obj: receiver, attr: message)
+            obj = receiver.source
+
+            msg = format(MSG_CALL, obj: obj, attr: message)
             add_offense(node, message: msg) do |corrector|
-              replacement = "change { #{receiver}.#{message} }"
+              replacement = "change { #{obj}.#{message} }"
               corrector.replace(node, replacement)
             end
           end
@@ -67,9 +69,11 @@ module RuboCop
           return unless style == :method_call
 
           expect_change_with_block(node) do |receiver, message|
-            msg = format(MSG_BLOCK, obj: receiver, attr: message)
+            obj = receiver.source
+
+            msg = format(MSG_BLOCK, obj: obj, attr: message)
             add_offense(node, message: msg) do |corrector|
-              replacement = "change(#{receiver}, :#{message})"
+              replacement = "change(#{obj}, :#{message})"
               corrector.replace(node, replacement)
             end
           end

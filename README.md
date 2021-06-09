@@ -3,8 +3,6 @@
 [![Join the chat at https://gitter.im/rubocop-rspec/Lobby](https://badges.gitter.im/rubocop-rspec/Lobby.svg)](https://gitter.im/rubocop-rspec/Lobby)
 [![Gem Version](https://badge.fury.io/rb/rubocop-rspec.svg)](https://rubygems.org/gems/rubocop-rspec)
 ![CI](https://github.com/rubocop-hq/rubocop-rspec/workflows/CI/badge.svg)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/8ffaabf633c968c22bdd/test_coverage)](https://codeclimate.com/github/rubocop-hq/rubocop-rspec/test_coverage)
-[![Maintainability](https://api.codeclimate.com/v1/badges/8ffaabf633c968c22bdd/maintainability)](https://codeclimate.com/github/rubocop-hq/rubocop-rspec/maintainability)
 
 RSpec-specific analysis for your projects, as an extension to
 [RuboCop](https://github.com/rubocop/rubocop).

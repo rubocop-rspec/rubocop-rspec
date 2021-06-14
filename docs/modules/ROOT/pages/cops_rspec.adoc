@@ -399,7 +399,7 @@ end
 | Yes
 | No
 | 1.0
-| 1.44
+| 3.0
 |===
 
 Check that the first argument to the top-level describe is a constant.
@@ -445,6 +445,10 @@ end
 
 |===
 | Name | Default value | Configurable values
+
+| Exclude
+| `spec/features/**/*`, `spec/requests/**/*`, `spec/routing/**/*`, `spec/system/**/*`, `spec/views/**/*`
+| Array
 
 | IgnoredMetadata
 | `{"type"=>["channel", "controller", "helper", "job", "mailer", "model", "request", "routing", "view", "feature", "system", "mailbox", "aruba"]}`

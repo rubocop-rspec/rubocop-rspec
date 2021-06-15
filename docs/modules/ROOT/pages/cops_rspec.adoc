@@ -399,7 +399,7 @@ end
 | Yes
 | No
 | 1.0
-| 3.0
+| 2.4.1
 |===
 
 Check that the first argument to the top-level describe is a constant.

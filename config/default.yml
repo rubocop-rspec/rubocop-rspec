@@ -170,7 +170,7 @@ RSpec/DescribeClass:
       - mailbox
       - aruba
   VersionAdded: '1.0'
-  VersionChanged: '3.0'
+  VersionChanged: 2.4.1
   StyleGuide: https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/DescribeClass
 
 RSpec/DescribeMethod:

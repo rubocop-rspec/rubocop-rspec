@@ -7,6 +7,7 @@ module RuboCop
     # Builds a YAML config file from two config hashes
     class ConfigFormatter
       EXTENSION_ROOT_DEPARTMENT = %r{^(RSpec/)}.freeze
+      SUBDEPARTMENTS = %(RSpec/Capybara RSpec/FactoryBot RSpec/Rails)
       STYLE_GUIDE_BASE_URL = 'https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/'
 
       def initialize(config, descriptions)
@@ -24,6 +25,8 @@ module RuboCop
 
       def unified_config
         cops.each_with_object(config.dup) do |cop, unified|
+          next if SUBDEPARTMENTS.include?(cop)
+
           unified[cop] = config.fetch(cop)
             .merge(descriptions.fetch(cop))
             .merge('StyleGuide' => STYLE_GUIDE_BASE_URL + cop.sub('RSpec/', ''))

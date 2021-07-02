@@ -148,6 +148,12 @@ RSpec/ContextWording:
 RSpec/DescribeClass:
   Description: Check that the first argument to the top-level describe is a constant.
   Enabled: true
+  Exclude:
+    - "**/spec/features/**/*"
+    - "**/spec/requests/**/*"
+    - "**/spec/routing/**/*"
+    - "**/spec/system/**/*"
+    - "**/spec/views/**/*"
   IgnoredMetadata:
     type:
       - channel
@@ -164,7 +170,7 @@ RSpec/DescribeClass:
       - mailbox
       - aruba
   VersionAdded: '1.0'
-  VersionChanged: '1.44'
+  VersionChanged: 2.4.1
   StyleGuide: https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/DescribeClass
 
 RSpec/DescribeMethod:

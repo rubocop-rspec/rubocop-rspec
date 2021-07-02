@@ -1270,6 +1270,48 @@ end
 
 * https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/ExampleWording
 
+== RSpec/ExcessiveDocstringSpacing
+
+|===
+| Enabled by default | Safe | Supports autocorrection | VersionAdded | VersionChanged
+
+| Pending
+| Yes
+| Yes
+| 2.5
+| -
+|===
+
+Checks for excessive whitespace in example descriptions.
+
+=== Examples
+
+[source,ruby]
+----
+# bad
+it '  has  excessive   spacing  ' do
+end
+
+# good
+it 'has excessive spacing' do
+end
+----
+
+[source,ruby]
+----
+# bad
+context '  when a condition   is met  ' do
+end
+
+# good
+context 'when a condition is met' do
+end
+----
+
+=== References
+
+* https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/ExcessiveDocstringSpacing
+
 == RSpec/ExpectActual
 
 |===

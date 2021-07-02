@@ -149,11 +149,11 @@ RSpec/DescribeClass:
   Description: Check that the first argument to the top-level describe is a constant.
   Enabled: true
   Exclude:
-    - spec/features/**/*
-    - spec/requests/**/*
-    - spec/routing/**/*
-    - spec/system/**/*
-    - spec/views/**/*
+    - "**/spec/features/**/*"
+    - "**/spec/requests/**/*"
+    - "**/spec/routing/**/*"
+    - "**/spec/system/**/*"
+    - "**/spec/views/**/*"
   IgnoredMetadata:
     type:
       - channel

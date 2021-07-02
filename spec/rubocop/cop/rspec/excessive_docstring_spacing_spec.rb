@@ -91,6 +91,32 @@ RSpec.describe RuboCop::Cop::RSpec::ExcessiveDocstringSpacing do
         end
       RUBY
     end
+
+    it 'finds descriptions with inner extra whitespace' do
+      expect_offense(<<-RUBY)
+        describe '#mymethod   (is cool)' do
+                  ^^^^^^^^^^^^^^^^^^^^^ Excessive whitespace.
+        end
+      RUBY
+
+      expect_correction(<<-RUBY)
+        describe '#mymethod (is cool)' do
+        end
+      RUBY
+    end
+
+    it 'finds descriptions with multiple inner extra whitespace' do
+      expect_offense(<<-RUBY)
+        describe '#mymethod      (  is     cool  )' do
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Excessive whitespace.
+        end
+      RUBY
+
+      expect_correction(<<-RUBY)
+        describe '#mymethod ( is cool )' do
+        end
+      RUBY
+    end
   end
 
   context 'when using `context`' do
@@ -190,6 +216,32 @@ RSpec.describe RuboCop::Cop::RSpec::ExcessiveDocstringSpacing do
     it 'skips interpolated description without leading whitespace' do
       expect_no_offenses(<<-'RUBY')
         context "#{should} the value be incorrect" do
+        end
+      RUBY
+    end
+
+    it 'finds descriptions with inner extra whitespace' do
+      expect_offense(<<-RUBY)
+        context 'when   something' do
+                 ^^^^^^^^^^^^^^^^ Excessive whitespace.
+        end
+      RUBY
+
+      expect_correction(<<-RUBY)
+        context 'when something' do
+        end
+      RUBY
+    end
+
+    it 'finds descriptions with multiple inner extra whitespace' do
+      expect_offense(<<-RUBY)
+        context 'when     something    cool happens!' do
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Excessive whitespace.
+        end
+      RUBY
+
+      expect_correction(<<-RUBY)
+        context 'when something cool happens!' do
         end
       RUBY
     end
@@ -317,6 +369,32 @@ RSpec.describe RuboCop::Cop::RSpec::ExcessiveDocstringSpacing do
     it 'skips interpolated description without leading whitespace' do
       expect_no_offenses(<<-'RUBY')
         it "#{should} not be here" do
+        end
+      RUBY
+    end
+
+    it 'finds descriptions with inner extra whitespace' do
+      expect_offense(<<-RUBY)
+        it 'does   something' do
+            ^^^^^^^^^^^^^^^^ Excessive whitespace.
+        end
+      RUBY
+
+      expect_correction(<<-RUBY)
+        it 'does something' do
+        end
+      RUBY
+    end
+
+    it 'finds descriptions with multiple inner extra whitespace' do
+      expect_offense(<<-RUBY)
+        it 'does  something      cool!' do
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^ Excessive whitespace.
+        end
+      RUBY
+
+      expect_correction(<<-RUBY)
+        it 'does something cool!' do
         end
       RUBY
     end

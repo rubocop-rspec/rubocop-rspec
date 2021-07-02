@@ -38,21 +38,25 @@ module RuboCop
         def on_block(node)
           example_description(node) do |description_node, message|
             current_text = text(message)
-            correct_text = current_text.strip
+            correct_text = strip_excessive_whitespace(current_text)
 
             if current_text != correct_text
-              add_whitespace_offense(description_node, MSG)
+              add_whitespace_offense(description_node, correct_text, MSG)
             end
           end
         end
 
         private
 
-        def add_whitespace_offense(node, message)
+        def strip_excessive_whitespace(text)
+          text.strip.gsub(/  +/, ' ')
+        end
+
+        def add_whitespace_offense(node, correct_text, message)
           docstring = docstring(node)
 
           add_offense(docstring, message: message) do |corrector|
-            corrector.replace(docstring, replacement_text(node))
+            corrector.replace(docstring, correct_text)
           end
         end
 
@@ -64,12 +68,6 @@ module RuboCop
             expr.begin_pos + 1,
             expr.end_pos - 1
           )
-        end
-
-        def replacement_text(node)
-          text = text(node)
-
-          text.strip
         end
 
         # Recursive processing is required to process nested dstr nodes

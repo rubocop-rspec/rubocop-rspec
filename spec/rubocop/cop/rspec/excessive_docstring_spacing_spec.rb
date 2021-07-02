@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe RuboCop::Cop::RSpec::ExcessiveDocstringSpacing do
+RSpec.describe RuboCop::Cop::RSpec::ExcessiveDocstringSpacing, only: true do
   it 'ignores non-example blocks' do
     expect_no_offenses('foo "should do something" do; end')
   end
@@ -114,6 +114,45 @@ RSpec.describe RuboCop::Cop::RSpec::ExcessiveDocstringSpacing do
 
       expect_correction(<<-RUBY)
         describe '#mymethod ( is cool )' do
+        end
+      RUBY
+    end
+
+    it 'skips \-separated multiline strings whose trailing whitespace ' \
+       'makes sense' do
+      expect_no_offenses(<<-RUBY)
+        describe '#mymethod ' \\
+            '(is cool)' do
+        end
+      RUBY
+    end
+
+    it 'flags \-separated multiline strings whose trailing whitespace ' \
+       'does not make sense' do
+      expect_offense(<<-RUBY)
+        describe '#mymethod   ' \\
+                  ^^^^^^^^^^^^^^^ Excessive whitespace.
+            '(is cool)' do
+        end
+      RUBY
+
+      expect_correction(<<-RUBY)
+        describe '#mymethod (is cool)' do
+        end
+      RUBY
+    end
+
+    it 'flags \-separated multiline interpolated strings with ' \
+       'leading whitespace' do
+      expect_offense(<<-'RUBY')
+        describe "  ##{object} " \
+                  ^^^^^^^^^^^^^^^^ Excessive whitespace.
+            "(is cool)" do
+        end
+      RUBY
+
+      expect_correction(<<-'RUBY')
+        describe "##{object} (is cool)" do
         end
       RUBY
     end
@@ -242,6 +281,45 @@ RSpec.describe RuboCop::Cop::RSpec::ExcessiveDocstringSpacing do
 
       expect_correction(<<-RUBY)
         context 'when something cool happens!' do
+        end
+      RUBY
+    end
+
+    it 'skips \-separated multiline strings whose trailing whitespace ' \
+       'makes sense' do
+      expect_no_offenses(<<-RUBY)
+        context 'when doing something ' \\
+            'like this' do
+        end
+      RUBY
+    end
+
+    it 'flags \-separated multiline strings whose trailing whitespace ' \
+       'does not make sense' do
+      expect_offense(<<-RUBY)
+        context 'when doing something   ' \\
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^ Excessive whitespace.
+            'like this' do
+        end
+      RUBY
+
+      expect_correction(<<-RUBY)
+        context 'when doing something like this' do
+        end
+      RUBY
+    end
+
+    it 'flags \-separated multiline interpolated strings with leading ' \
+       'whitespace' do
+      expect_offense(<<-'RUBY')
+        context "  when doing something " \
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^ Excessive whitespace.
+            "like #{object}" do
+        end
+      RUBY
+
+      expect_correction(<<-'RUBY')
+        context "when doing something like #{object}" do
         end
       RUBY
     end
@@ -395,6 +473,45 @@ RSpec.describe RuboCop::Cop::RSpec::ExcessiveDocstringSpacing do
 
       expect_correction(<<-RUBY)
         it 'does something cool!' do
+        end
+      RUBY
+    end
+
+    it 'skips \-separated multiline strings whose trailing whitespace ' \
+       'makes sense' do
+      expect_no_offenses(<<-RUBY)
+        it 'should do something ' \\
+            'and correctly fix' do
+        end
+      RUBY
+    end
+
+    it 'flags \-separated multiline strings whose trailing whitespace ' \
+       'does not make sense' do
+      expect_offense(<<-RUBY)
+        it 'does something   ' \\
+            ^^^^^^^^^^^^^^^^^^^^ Excessive whitespace.
+            'and correctly fix' do
+        end
+      RUBY
+
+      expect_correction(<<-RUBY)
+        it 'does something and correctly fix' do
+        end
+      RUBY
+    end
+
+    it 'flags \-separated multiline interpolated strings with leading ' \
+       'whitespace' do
+      expect_offense(<<-'RUBY')
+        it "  does something " \
+            ^^^^^^^^^^^^^^^^^^^^ Excessive whitespace.
+            "with #{object}" do
+        end
+      RUBY
+
+      expect_correction(<<-'RUBY')
+        it "does something with #{object}" do
         end
       RUBY
     end

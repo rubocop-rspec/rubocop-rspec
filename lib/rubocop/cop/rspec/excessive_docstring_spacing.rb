@@ -31,7 +31,7 @@ module RuboCop
         def_node_matcher :example_description, <<-PATTERN
           (block (send _ {:describe :context :it} ${
             (str $_)
-            $(dstr ({str `sym} ...) ...)
+            $(dstr ({str dstr `sym} ...) ...)
           } ...) ...)
         PATTERN
 

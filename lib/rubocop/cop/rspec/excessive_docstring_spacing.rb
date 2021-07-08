@@ -29,7 +29,7 @@ module RuboCop
 
         # @!method example_description(node)
         def_node_matcher :example_description, <<-PATTERN
-          (block (send _ {:describe :context :it} ${
+          (block (send _ {#Examples.all #ExampleGroups.all} ${
             (str $_)
             $(dstr ({str dstr `sym} ...) ...)
           } ...) ...)

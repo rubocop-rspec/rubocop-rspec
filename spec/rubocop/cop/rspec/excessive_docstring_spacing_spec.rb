@@ -516,4 +516,57 @@ RSpec.describe RuboCop::Cop::RSpec::ExcessiveDocstringSpacing, only: true do
       RUBY
     end
   end
+
+  context 'when using other common example groups' do
+    it 'supports `xcontext`' do
+      expect_offense(<<-'RUBY')
+        xcontext "when testing  " do
+                  ^^^^^^^^^^^^^^ Excessive whitespace.
+        end
+      RUBY
+
+      expect_correction(<<-'RUBY')
+        xcontext "when testing" do
+        end
+      RUBY
+    end
+
+    it 'supports `feature`' do
+      expect_offense(<<-'RUBY')
+        feature "  #{:stuff}" do
+                 ^^^^^^^^^^^ Excessive whitespace.
+        end
+      RUBY
+
+      expect_correction(<<-'RUBY')
+        feature "#{:stuff}" do
+        end
+      RUBY
+    end
+
+    it 'supports `its`' do
+      expect_offense(<<-'RUBY')
+        its("  length  ") { should eq(1) }
+             ^^^^^^^^^^ Excessive whitespace.
+      RUBY
+
+      expect_correction(<<-'RUBY')
+        its("length") { should eq(1) }
+      RUBY
+    end
+
+    it 'supports `skip`' do
+      expect_offense(<<-RUBY)
+        skip '  this   please   ' \\
+              ^^^^^^^^^^^^^^^^^^^^^ Excessive whitespace.
+            '  and thank you  !' do
+        end
+      RUBY
+
+      expect_correction(<<-'RUBY')
+        skip 'this please and thank you !' do
+        end
+      RUBY
+    end
+  end
 end

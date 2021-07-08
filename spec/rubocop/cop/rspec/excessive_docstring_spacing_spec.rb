@@ -555,7 +555,7 @@ RSpec.describe RuboCop::Cop::RSpec::ExcessiveDocstringSpacing, only: true do
       RUBY
     end
 
-    it 'supports `skip`' do
+    it 'supports `skip` (with a block)' do
       expect_offense(<<-RUBY)
         skip '  this   please   ' \\
               ^^^^^^^^^^^^^^^^^^^^^ Excessive whitespace.
@@ -566,6 +566,18 @@ RSpec.describe RuboCop::Cop::RSpec::ExcessiveDocstringSpacing, only: true do
       expect_correction(<<-'RUBY')
         skip 'this please and thank you !' do
         end
+      RUBY
+    end
+
+    it 'supports `skip` (without a block)' do
+      expect_offense(<<-RUBY)
+        skip '  this   please   ' \\
+              ^^^^^^^^^^^^^^^^^^^^^ Excessive whitespace.
+            '  and thank you  !'
+      RUBY
+
+      expect_correction(<<-'RUBY')
+        skip 'this please and thank you !'
       RUBY
     end
   end

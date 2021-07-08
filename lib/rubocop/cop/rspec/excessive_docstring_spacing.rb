@@ -59,7 +59,7 @@ module RuboCop
 
           return unless excessive_whitespace?(text)
 
-          add_whitespace_offense(node, text, MSG)
+          add_whitespace_offense(node, text)
         end
 
         # @param text [String]
@@ -72,11 +72,13 @@ module RuboCop
           text.strip.gsub(/  +/, ' ')
         end
 
-        def add_whitespace_offense(node, text, message)
+        # @param node [RuboCop::AST::Node]
+        # @param text [String]
+        def add_whitespace_offense(node, text)
           docstring = docstring(node)
           corrected = strip_excessive_whitespace(text)
 
-          add_offense(docstring, message: message) do |corrector|
+          add_offense(docstring) do |corrector|
             corrector.replace(docstring, corrected)
           end
         end

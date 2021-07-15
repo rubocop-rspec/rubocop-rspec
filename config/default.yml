@@ -269,6 +269,12 @@ RSpec/ExampleWithoutDescription:
   VersionAdded: '1.22'
   StyleGuide: https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/ExampleWithoutDescription
 
+RSpec/ExcessiveDocstringSpacing:
+  Description: Checks for excessive whitespace in example descriptions.
+  Enabled: pending
+  VersionAdded: '2.5'
+  StyleGuide: https://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/ExcessiveDocstringSpacing
+
 RSpec/ExampleWording:
   Description: Checks for common mistakes in example descriptions.
   Enabled: true

@@ -2,6 +2,8 @@
 
 ## Master (Unreleased)
 
+* Add `RSpec/ExcessiveDocstringSpacing` cop. ([@G-Rath][])
+
 ## 2.4.0 (2021-06-09)
 
 * Update `RSpec/FilePath` to check suffix when given a non-constant top-level node (e.g. features). ([@topalovic][])
@@ -625,3 +627,4 @@ Compatibility release so users can upgrade RuboCop to 0.51.0. No new features.
 [@rrosenblum]: https://github.com/rrosenblum
 [@paydaylight]: https://github.com/paydaylight
 [@topalovic]: https://github.com/topalovic
+[@G-Rath]: https://github.com/G-Rath

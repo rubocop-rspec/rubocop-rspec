@@ -27,6 +27,7 @@
 * xref:cops_rspec.adoc#rspecexamplelength[RSpec/ExampleLength]
 * xref:cops_rspec.adoc#rspecexamplewithoutdescription[RSpec/ExampleWithoutDescription]
 * xref:cops_rspec.adoc#rspecexamplewording[RSpec/ExampleWording]
+* xref:cops_rspec.adoc#rspecexcessivedocstringspacing[RSpec/ExcessiveDocstringSpacing]
 * xref:cops_rspec.adoc#rspecexpectactual[RSpec/ExpectActual]
 * xref:cops_rspec.adoc#rspecexpectchange[RSpec/ExpectChange]
 * xref:cops_rspec.adoc#rspecexpectinhook[RSpec/ExpectInHook]

@@ -26,41 +26,26 @@ module RuboCop
         extend AutoCorrector
 
         MSG = 'Excessive whitespace.'
-        RESTRICT_ON_SEND = %i[skip].freeze
 
         # @!method example_description(node)
         def_node_matcher :example_description, <<-PATTERN
-          {
-            (send _ _ ${
-              $str
-              $(dstr ({str dstr `sym} ...) ...)
-            } ...)
-            (block (send _ {#Examples.all #ExampleGroups.all} ${
-              $str
-              $(dstr ({str dstr `sym} ...) ...)
-            } ...) ...)
-          }
+          (send _ {#Examples.all #ExampleGroups.all} ${
+            $str
+            $(dstr ({str dstr `sym} ...) ...)
+          } ...)
         PATTERN
 
         def on_send(node)
-          example_description(node, &method(:check_for_whitespace_offense))
-        end
+          example_description(node) do |description_node, message|
+            text = text(message)
 
-        def on_block(node)
-          example_description(node, &method(:check_for_whitespace_offense))
+            return unless excessive_whitespace?(text)
+
+            add_whitespace_offense(description_node, text)
+          end
         end
 
         private
-
-        # @param node [RuboCop::AST::Node]
-        # @param message [RuboCop::AST::Node]
-        def check_for_whitespace_offense(node, message)
-          text = text(message)
-
-          return unless excessive_whitespace?(text)
-
-          add_whitespace_offense(node, text)
-        end
 
         # @param text [String]
         def excessive_whitespace?(text)

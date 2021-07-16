@@ -102,12 +102,12 @@ RSpec.describe RuboCop::Cop::RSpec::FactoryBot::CreateList do
 
     it 'flags usage of n.times with keyword arguments' do
       expect_offense(<<~RUBY)
-        5.times { create :user, :trait, key: val }
+        5.times { create :user, :trait, key: :val }
         ^^^^^^^ Prefer create_list.
       RUBY
 
       expect_correction(<<~RUBY)
-        create_list :user, 5, :trait, key: val
+        create_list :user, 5, :trait, key: :val
       RUBY
     end
 
@@ -140,6 +140,39 @@ RSpec.describe RuboCop::Cop::RSpec::FactoryBot::CreateList do
             create :account, user: user
             create :profile, user: user
         end
+      RUBY
+    end
+
+    it 'flags usage of n.times with dynamic arguments' do
+      expect_offense(<<~RUBY)
+        3.times { create(:user, foo: rand(2), bar: 'baz', joe: doe) }
+        ^^^^^^^ Prefer create_list.
+      RUBY
+
+      expect_correction(<<~RUBY)
+create_list(:user, 3, bar: 'baz') do |user|
+user.foo = rand(2)
+user.joe = doe
+end
+      RUBY
+    end
+
+    it 'flags usage of n.times with dynamic arguments and existing block' do
+      expect_offense(<<~RUBY)
+      3.times do
+      ^^^^^^^ Prefer create_list.
+        create(:user, foo: rand(2), bar: 'baz', joe: doe) do |user|
+          create(:account, user: user)
+        end
+      end
+      RUBY
+
+      expect_correction(<<~RUBY)
+      create_list(:user, 3, bar: 'baz') do |user|
+          user.foo = rand(2)
+          user.joe = doe
+          create(:account, user: user)
+      end
       RUBY
     end
   end

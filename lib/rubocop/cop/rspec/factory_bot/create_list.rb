@@ -159,53 +159,80 @@ module RuboCop
 
             def call_with_block_replacement(node)
               block = node.body
-              arguments = build_arguments(block, node.receiver.source)
+
+              factory, *options = *block.send_node.arguments
+
               replacement = format_receiver(block.send_node.receiver)
-              replacement += format_method_call(block, 'create_list', arguments)
-              replacement += format_block(block)
+
+              process_arguments(options) do |traits, static, dynamic|
+                arguments = "#{factory.source}, #{node.receiver.source}"
+                arguments += ", #{build_options_string(traits)}" if traits.any?
+                arguments += ", #{build_options_string(static)}" if static.any?
+
+                replacement += format_method_call(block, 'create_list', arguments)
+                replacement += format_block(block, dynamic)
+              end
+
               replacement
-            end
-
-            def build_arguments(node, count)
-              factory, *options = *node.send_node.arguments
-
-              arguments = ":#{factory.value}, #{count}"
-              options = build_options_string(options)
-              arguments += ", #{options}" unless options.empty?
-              arguments
             end
 
             def call_replacement(node)
               block = node.body
               factory, *options = *block.arguments
 
-              arguments = "#{factory.source}, #{node.receiver.source}"
-              options = build_options_string(options)
-              arguments += ", #{options}" unless options.empty?
-
               replacement = format_receiver(block.receiver)
-              replacement += format_method_call(block, 'create_list', arguments)
+
+              process_arguments(options) do |traits, static, dynamic|
+                arguments = "#{factory.source}, #{node.receiver.source}"
+                arguments += ", #{build_options_string(traits)}" if traits.any?
+                arguments += ", #{build_options_string(static)}" if static.any?
+                replacement += format_method_call(block, 'create_list', arguments)
+                replacement += create_block(factory.value, dynamic) if dynamic.any?
+              end
+
               replacement
             end
 
-            def format_block(node)
-              if node.body.begin_type?
-                format_multiline_block(node)
+            def create_block(factory, arguments)
+              block = " do |#{factory}|\n"
+              arguments.each do |pair|
+                block += "#{factory}.#{pair.key.source} = #{pair.value.source}\n"
+              end
+              block += "end"
+            end
+
+
+            def format_block(node, dynamic)
+              if node.body.begin_type? || dynamic.any?
+                format_multiline_block(node, dynamic)
               else
                 format_singeline_block(node)
               end
             end
 
-            def format_multiline_block(node)
+            def format_multiline_block(node, dynamic)
               indent = ' ' * node.body.loc.column
               indent_end = ' ' * node.parent.loc.column
-              " do #{node.arguments.source}\n" \
-              "#{indent}#{node.body.source}\n" \
-              "#{indent_end}end"
+              factory = node.arguments.first.source
+
+              block = " do |#{factory}|\n"
+              dynamic.each do |pair|
+                block += "#{indent}#{factory}.#{pair.key.source} = #{pair.value.source}\n"
+              end
+              block += "#{indent}#{node.body.source}\n"
+              block += "#{indent_end}end"
             end
 
             def format_singeline_block(node)
               " { #{node.arguments.source} #{node.body.source} }"
+            end
+
+            def process_arguments(options)
+              traits = options.reject(&:hash_type?)
+              properties = options.select(&:hash_type?).flat_map(&:pairs)
+              static, dynamic = properties.partition { |pair| pair.value.literal? }
+
+              yield traits, static, dynamic
             end
           end
         end

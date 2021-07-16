@@ -11,6 +11,7 @@
 * Add new `RSpec/IdenticalEqualityAssertion` cop. ([@tejasbubane][])
 * Add `RSpec/Rails/AvoidSetupHook` cop. ([@paydaylight][])
 * Fix false negative in `RSpec/ExpectChange` cop with block style and chained method call. ([@tejasbubane][])
+* Fix `Include` configuration for sub-departments. ([@pirj][])
 
 ## 2.3.0 (2021-04-28)
 

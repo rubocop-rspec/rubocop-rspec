@@ -1,0 +1,50 @@
+name: CI
+
+on: push
+
+jobs:
+  confirm_config_and_documentation:
+    runs-on: ubuntu-latest
+    name: Confirm config and documentation
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+          bundler-cache: true
+      - run: bundle exec rake confirm_config documentation_syntax_check confirm_documentation
+
+  main:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby:
+          - 2.5
+          - 2.6
+          - 2.7
+          - "3.0"
+          - jruby
+        task:
+          - internal_investigation
+          - spec
+        rubocop_version:
+          - gem
+        include:
+          - rubocop_version: edge
+            ruby: 2.7
+            task: internal_investigation
+          - rubocop_version: edge
+            ruby: 2.7
+            task: spec
+    name: ${{ matrix.task }}, Ruby ${{ matrix.ruby }} (${{ matrix.rubocop_version }})
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use latest RuboCop from `master`
+        run: |
+          echo "gem 'rubocop', github: 'rubocop-hq/rubocop'" > Gemfile.local
+        if: matrix.rubocop_version == 'edge'
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "${{ matrix.ruby }}"
+          bundler-cache: true
+      - run: bundle exec rake ${{ matrix.task }}

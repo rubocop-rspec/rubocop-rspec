@@ -21,12 +21,6 @@ RSpec::Core::RakeTask.new(:spec) do |spec|
   spec.pattern = FileList['spec/**/*_spec.rb']
 end
 
-desc 'Run RSpec with code coverage'
-task :coverage do
-  ENV['COVERAGE'] = 'true'
-  Rake::Task['spec'].execute
-end
-
 desc 'Run RuboCop over this gem'
 task :internal_investigation do
   sh('bundle exec rubocop --require rubocop-rspec')
@@ -61,7 +55,7 @@ task confirm_documentation: :generate_cops_documentation do
   end
 end
 
-task default: %i[build_config coverage
+task default: %i[build_config spec
                  internal_investigation
                  confirm_config
                  documentation_syntax_check
